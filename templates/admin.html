@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PosterDash Control</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="page-shell">
+        <header class="hero">
+            <div class="hero-top">
+                <h1>PosterDash Control</h1>
+                <div class="hero-actions">
+                    <div class="client-chip">
+                        <span class="client-label">Client</span>
+                        <a href="/client" target="_blank">http://{{ local_ip }}:5005/client</a>
+                    </div>
+                    <a href="/settings" class="btn btn-secondary link-btn">Settings</a>
+                </div>
+            </div>
+
+            <div class="control-card">
+                <form method="get" class="top-form" id="searchForm">
+                    <div class="input-group input-search">
+                        <input type="text" name="search" placeholder="Search movies" value="{{ search or '' }}">
+                    </div>
+
+                    <div class="input-group">
+                        <select name="genre" id="genreFilter">
+                            <option value="">All Genres</option>
+                            {% for g in genres %}
+                            <option value="{{ g.id }}" {% if genre == g.id|string %}selected{% endif %}>{{ g.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <select name="decade" id="decadeFilter">
+                            <option value="">All Years</option>
+                            <option value="1980" {% if decade == "1980" %}selected{% endif %}>80s</option>
+                            <option value="1990" {% if decade == "1990" %}selected{% endif %}>90s</option>
+                            <option value="2000" {% if decade == "2000" %}selected{% endif %}>00s</option>
+                            <option value="2010" {% if decade == "2010" %}selected{% endif %}>10s</option>
+                            <option value="2020" {% if decade == "2020" %}selected{% endif %}>20s</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Search</button>
+                </form>
+
+                <div class="toolbar toolbar-compact">
+                    <div class="toolbar-group">
+                        <select id="slideshowGenreSelect">
+                            <option value="">Use selected posters</option>
+                            {% for g in genres %}
+                            <option value="{{ g.id }}">{{ g.name }}</option>
+                            {% endfor %}
+                        </select>
+
+                        <select id="slideshowPagesSelect">
+                            <option value="3">3 pages</option>
+                            <option value="5" selected>5 pages</option>
+                            <option value="8">8 pages</option>
+                            <option value="10">10 pages</option>
+                        </select>
+                    </div>
+
+                    <div class="toolbar-group">
+                        <button id="startSlideshowBtn" type="button" class="btn btn-primary">Start</button>
+                        <button id="stopSlideshowBtn" type="button" class="btn btn-secondary">Stop</button>
+                        <a href="/client" target="_blank" class="btn btn-secondary link-btn">Client</a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <section class="selected-panel">
+            <div class="section-header">
+                <div class="selected-header-left">
+                    <h2>Selected Posters</h2>
+                    <button id="removeAllBtn" type="button" class="btn btn-danger btn-small">Remove All</button>
+                </div>
+                <span class="selection-count" id="selectionCount">0 selected</span>
+            </div>
+            <div id="selectedPostersList" class="selected-grid"></div>
+        </section>
+
+        <section class="grid">
+            {% for movie in movies %}
+            <article class="movie" id="movie{{ movie.id }}" data-movie-id="{{ movie.id }}">
+                <img
+                    src="{{ image_base }}{{ movie.poster_path }}"
+                    alt="{{ movie.title }}"
+                    data-fullsrc="{{ full_image_base }}{{ movie.poster_path }}"
+                    data-title="{{ movie.title }}"
+                    data-genre-ids="{{ movie.genre_ids|join(',') }}"
+                    class="poster-image"
+                >
+
+                <div class="movie-content">
+                    <p class="movie-title">{{ movie.title }}</p>
+                    <div class="card-buttons">
+                        <button
+                            class="btn btn-card select-btn"
+                            data-id="{{ movie.id }}"
+                            data-src="{{ full_image_base }}{{ movie.poster_path }}"
+                            data-thumb="{{ image_base }}{{ movie.poster_path }}"
+                            data-title="{{ movie.title }}"
+                            data-genre-ids="{{ movie.genre_ids|join(',') }}">
+                            Select
+                        </button>
+
+                        <button
+                            class="btn btn-card-secondary show-now-btn"
+                            data-id="{{ movie.id }}"
+                            data-src="{{ full_image_base }}{{ movie.poster_path }}"
+                            data-thumb="{{ image_base }}{{ movie.poster_path }}"
+                            data-title="{{ movie.title }}">
+                            Show Now
+                        </button>
+                    </div>
+                </div>
+            </article>
+            {% endfor %}
+        </section>
+
+        <nav class="pagination">
+            {% if page > 1 %}
+            <a href="/admin?page={{ page-1 }}&search={{ search or '' }}&genre={{ genre or '' }}&decade={{ decade or '' }}">
+                <button type="button" class="btn btn-secondary">Previous</button>
+            </a>
+            {% endif %}
+
+            <span class="page-badge">Page {{ page }}</span>
+
+            {% if page < total_pages %}
+            <a href="/admin?page={{ page+1 }}&search={{ search or '' }}&genre={{ genre or '' }}&decade={{ decade or '' }}">
+                <button type="button" class="btn btn-secondary">Next</button>
+            </a>
+            {% endif %}
+        </nav>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+</body>
+</html>
