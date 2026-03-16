@@ -7,13 +7,12 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body class="client-body">
-
     <div id="waitingScreen" class="waiting-screen">
         <div class="waiting-card">
             <h1>Waiting for Posters</h1>
             <p>Open the control panel on:</p>
-            <p class="waiting-ip">http://{{ local_ip }}:5005/admin</p>
-            <p class="waiting-subtle">Posters will appear automatically</p>
+            <p class="waiting-ip">http://{{ local_ip }}:5000/admin</p>
+            <p class="waiting-subtle">Posters and uploaded media will appear automatically</p>
         </div>
     </div>
 
@@ -21,7 +20,12 @@
         <div id="clientGlow" class="poster-glow"></div>
 
         <div class="poster-frame poster-frame-full">
-            <img id="clientPoster" class="client-poster client-poster-full" src="" alt="">
+            <div class="poster-slider">
+                <img id="clientPosterCurrent" class="client-poster client-poster-full" src="" alt="">
+                <img id="clientPosterNext" class="client-poster client-poster-full" src="" alt="">
+                <video id="clientVideoCurrent" class="client-video hidden" autoplay muted loop playsinline></video>
+            </div>
+
             <div id="nowPlayingInside" class="now-playing-inside hidden"></div>
         </div>
     </div>

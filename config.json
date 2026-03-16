@@ -1,3 +1,5 @@
 {
-  "api_key": ""
+  "api_key": "",
+  "slideshow_delay": 10000,
+  "insert_media_every": 3
 }

@@ -1,6 +1,16 @@
 {
   "selected_posters": [],
-  "current_poster": null,
+  "uploaded_media": [
+    {
+      "id": "6b2d81c592a79a98793d9494da24c97f.png",
+      "title": "6b2d81c592a79a98793d9494da24c97f.png",
+      "src": "/static/uploads/6b2d81c592a79a98793d9494da24c97f.png",
+      "thumb": "/static/uploads/6b2d81c592a79a98793d9494da24c97f.png",
+      "type": "image",
+      "show_now_playing": false
+    }
+  ],
+  "current_item": null,
   "slideshow_running": false,
-  "slideshow_delay": 25000
+  "slideshow_delay": 10000
 }

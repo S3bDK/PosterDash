@@ -1,5 +1,4 @@
 let pickedPosters = [];
-const slideshowDelay = 25000;
 
 const selectedPostersList = document.getElementById("selectedPostersList");
 const selectionCount = document.getElementById("selectionCount");
@@ -8,6 +7,7 @@ const slideshowPagesSelect = document.getElementById("slideshowPagesSelect");
 const searchForm = document.getElementById("searchForm");
 const genreFilter = document.getElementById("genreFilter");
 const decadeFilter = document.getElementById("decadeFilter");
+const delayInput = document.getElementById("delayInput");
 
 function normalizeGenreIds(rawGenreIds) {
     if (!rawGenreIds) return [];
@@ -17,15 +17,26 @@ function normalizeGenreIds(rawGenreIds) {
 async function pushSelectedToServer() {
     await fetch("/api/selected", {
         method: "POST",
-        headers: {"Content-Type": "application/json"},
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ selected_posters: pickedPosters })
+    });
+}
+
+async function saveDelayToServer() {
+    const delaySeconds = Math.max(1, Number(delayInput.value) || 15);
+    const delayMs = delaySeconds * 1000;
+
+    await fetch("/api/save_delay", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ delay: delayMs })
     });
 }
 
 async function showNowPoster(poster) {
     await fetch("/api/current", {
         method: "POST",
-        headers: {"Content-Type": "application/json"},
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
             ...poster,
             show_now_playing: true
@@ -76,12 +87,8 @@ function setCardSelectedState(id, isSelected) {
     const card = document.getElementById("movie" + id);
     const button = document.querySelector(`.select-btn[data-id="${id}"]`);
 
-    if (card) {
-        card.classList.toggle("selected", isSelected);
-    }
-    if (button) {
-        button.textContent = isSelected ? "Remove" : "Select";
-    }
+    if (card) card.classList.toggle("selected", isSelected);
+    if (button) button.textContent = isSelected ? "Remove" : "Select";
 }
 
 async function togglePoster(button) {
@@ -94,7 +101,7 @@ async function togglePoster(button) {
     const index = pickedPosters.findIndex((p) => p.src === src);
 
     if (index === -1) {
-        pickedPosters.push({ id, src, thumb, title, genreIds });
+        pickedPosters.push({ id, src, thumb, title, genreIds, type: "poster" });
         setCardSelectedState(id, true);
     } else {
         pickedPosters.splice(index, 1);
@@ -109,9 +116,7 @@ async function removePosterBySrc(src) {
     const poster = pickedPosters.find((p) => p.src === src);
     pickedPosters = pickedPosters.filter((p) => p.src !== src);
 
-    if (poster) {
-        setCardSelectedState(poster.id, false);
-    }
+    if (poster) setCardSelectedState(poster.id, false);
 
     updateSelectedPanel();
     await pushSelectedToServer();
@@ -120,10 +125,7 @@ async function removePosterBySrc(src) {
 async function removeAllPosters() {
     pickedPosters = [];
 
-    document.querySelectorAll(".movie").forEach((card) => {
-        card.classList.remove("selected");
-    });
-
+    document.querySelectorAll(".movie").forEach((card) => card.classList.remove("selected"));
     document.querySelectorAll(".select-btn").forEach((button) => {
         button.textContent = "Select";
     });
@@ -137,9 +139,12 @@ async function removeAllPosters() {
 
 async function startSlideshow() {
     let postersForSlideshow = [...pickedPosters];
-
     const selectedGenre = slideshowGenreSelect.value;
     const selectedPages = slideshowPagesSelect.value;
+    const delaySeconds = Math.max(1, Number(delayInput.value) || 15);
+    const delayMs = delaySeconds * 1000;
+
+    await saveDelayToServer();
 
     if (selectedGenre) {
         const params = new URLSearchParams({
@@ -155,18 +160,10 @@ async function startSlideshow() {
             return;
         }
 
-        postersForSlideshow = data.posters.map((p) => ({
-            ...p,
-            id: String(p.id),
-            show_now_playing: false
-        }));
-
+        postersForSlideshow = data.posters;
         pickedPosters = postersForSlideshow.map((p) => ({ ...p }));
 
-        document.querySelectorAll(".movie").forEach((card) => {
-            card.classList.remove("selected");
-        });
-
+        document.querySelectorAll(".movie").forEach((card) => card.classList.remove("selected"));
         document.querySelectorAll(".select-btn").forEach((button) => {
             button.textContent = "Select";
         });
@@ -191,10 +188,10 @@ async function startSlideshow() {
 
     await fetch("/api/slideshow/start", {
         method: "POST",
-        headers: {"Content-Type": "application/json"},
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
             selected_posters: postersForSlideshow,
-            delay: slideshowDelay
+            delay: delayMs
         })
     });
 }
@@ -212,10 +209,11 @@ async function restoreSelectedFromServer() {
 
         pickedPosters = Array.isArray(state.selected_posters) ? state.selected_posters : [];
 
-        document.querySelectorAll(".movie").forEach((card) => {
-            card.classList.remove("selected");
-        });
+        if (delayInput && state.slideshow_delay) {
+            delayInput.value = Math.max(1, Math.round(state.slideshow_delay / 1000));
+        }
 
+        document.querySelectorAll(".movie").forEach((card) => card.classList.remove("selected"));
         document.querySelectorAll(".select-btn").forEach((button) => {
             button.textContent = "Select";
         });
@@ -223,11 +221,6 @@ async function restoreSelectedFromServer() {
         pickedPosters.forEach((poster) => {
             if (poster.id) {
                 setCardSelectedState(String(poster.id), true);
-            } else {
-                const match = document.querySelector(`.select-btn[data-src="${CSS.escape(poster.src)}"]`);
-                if (match) {
-                    setCardSelectedState(String(match.dataset.id), true);
-                }
             }
         });
 
@@ -251,7 +244,8 @@ document.querySelectorAll(".show-now-btn").forEach((button) => {
             id: button.dataset.id,
             src: button.dataset.src,
             thumb: button.dataset.thumb,
-            title: button.dataset.title
+            title: button.dataset.title,
+            type: "poster"
         });
     });
 });
@@ -261,15 +255,15 @@ document.getElementById("stopSlideshowBtn").addEventListener("click", stopSlides
 document.getElementById("removeAllBtn").addEventListener("click", removeAllPosters);
 
 if (genreFilter) {
-    genreFilter.addEventListener("change", () => {
-        searchForm.submit();
-    });
+    genreFilter.addEventListener("change", () => searchForm.submit());
 }
 
 if (decadeFilter) {
-    decadeFilter.addEventListener("change", () => {
-        searchForm.submit();
-    });
+    decadeFilter.addEventListener("change", () => searchForm.submit());
+}
+
+if (delayInput) {
+    delayInput.addEventListener("change", saveDelayToServer);
 }
 
 restoreSelectedFromServer();

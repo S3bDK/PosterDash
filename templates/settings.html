@@ -7,36 +7,39 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-    <div class="page-shell">
-        <div class="settings-card">
+<div class="page-shell">
+    <div class="settings-card">
+        <div class="hero-top">
             <h1>Settings</h1>
-
-            {% with messages = get_flashed_messages() %}
-                {% if messages %}
-                    <div class="flash-box">
-                        {% for message in messages %}
-                            <p>{{ message }}</p>
-                        {% endfor %}
-                    </div>
-                {% endif %}
-            {% endwith %}
-
-            <form method="post" class="settings-form">
-                <label for="api_key">TMDb API Key</label>
-                <input
-                    type="text"
-                    id="api_key"
-                    name="api_key"
-                    value="{{ api_key }}"
-                    placeholder="Paste your TMDb API key here"
-                >
-                <button type="submit" class="btn btn-primary">Save API Key</button>
-            </form>
-
-            <div class="settings-links">
-                <a href="/admin" class="btn btn-secondary link-btn">Go to Control Panel</a>
-            </div>
+            <nav class="nav-links">
+                <a href="/admin" class="btn btn-secondary link-btn">Admin</a>
+                <a href="/uploads" class="btn btn-secondary link-btn">Uploads</a>
+                <a href="/settings" class="btn btn-secondary link-btn">Settings</a>
+                <a href="/client" target="_blank" class="btn btn-secondary link-btn">Client</a>
+            </nav>
         </div>
+
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="flash-box">
+            {% for message in messages %}<p>{{ message }}</p>{% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
+
+        <form method="post" class="settings-form">
+            <label for="api_key">TMDb API Key</label>
+            <input type="text" id="api_key" name="api_key" value="{{ config.api_key }}" placeholder="Paste TMDb API key">
+
+            <label for="slideshow_delay">Slideshow Delay (milliseconds)</label>
+            <input type="number" id="slideshow_delay" name="slideshow_delay" value="{{ config.slideshow_delay }}" min="1000" step="1000">
+
+            <label for="insert_media_every">Insert Uploaded Media After Every X Posters</label>
+            <input type="number" id="insert_media_every" name="insert_media_every" value="{{ config.insert_media_every }}" min="1" step="1">
+
+            <button type="submit" class="btn btn-primary">Save Settings</button>
+        </form>
     </div>
+</div>
 </body>
 </html>

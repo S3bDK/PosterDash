@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PosterDash Uploads</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<div class="page-shell">
+    <header class="hero">
+        <div class="hero-top">
+            <h1>Uploads</h1>
+            <nav class="nav-links">
+                <a href="/admin" class="btn btn-secondary link-btn">Admin</a>
+                <a href="/uploads" class="btn btn-secondary link-btn">Uploads</a>
+                <a href="/settings" class="btn btn-secondary link-btn">Settings</a>
+                <a href="/client" target="_blank" class="btn btn-secondary link-btn">Client</a>
+            </nav>
+        </div>
+
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="flash-box">
+            {% for message in messages %}<p>{{ message }}</p>{% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
+
+        <div class="control-card">
+            <form method="post" enctype="multipart/form-data" class="upload-form">
+                <input type="file" name="file" accept=".jpg,.jpeg,.png,.webp,.mp4">
+                <button type="submit" class="btn btn-primary">Upload</button>
+            </form>
+            <p class="muted-text">Allowed: jpg, jpeg, png, webp, mp4</p>
+        </div>
+    </header>
+
+    <section class="grid">
+        {% for item in uploaded_media %}
+        <article class="movie upload-card">
+            {% if item.type == "video" %}
+            <video src="{{ item.src }}" class="upload-thumb" muted></video>
+            {% else %}
+            <img src="{{ item.src }}" alt="{{ item.title }}" class="upload-thumb">
+            {% endif %}
+
+            <div class="movie-content">
+                <p class="movie-title">{{ item.title }}</p>
+                <div class="card-buttons">
+                    <button class="btn btn-danger remove-upload-btn" data-id="{{ item.id }}">Delete</button>
+                </div>
+            </div>
+        </article>
+        {% endfor %}
+    </section>
+</div>
+
+<script>
+document.querySelectorAll(".remove-upload-btn").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+        await fetch("/api/remove_upload", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({ id: btn.dataset.id })
+        });
+        window.location.reload();
+    });
+});
+</script>
+</body>
+</html>
