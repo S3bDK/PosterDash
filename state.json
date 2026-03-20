@@ -1,16 +1,14 @@
 {
   "selected_posters": [],
-  "uploaded_media": [
-    {
-      "id": "6b2d81c592a79a98793d9494da24c97f.png",
-      "title": "6b2d81c592a79a98793d9494da24c97f.png",
-      "src": "/static/uploads/6b2d81c592a79a98793d9494da24c97f.png",
-      "thumb": "/static/uploads/6b2d81c592a79a98793d9494da24c97f.png",
-      "type": "image",
-      "show_now_playing": false
-    }
-  ],
-  "current_item": null,
-  "slideshow_running": false,
+  "uploaded_media": [],
+  "current_item": {
+    "id": "1290821",
+    "src": "https://image.tmdb.org/t/p/original/buPFnHZ3xQy6vZEHxbHgL1Pc6CR.jpg",
+    "thumb": "https://image.tmdb.org/t/p/w500/buPFnHZ3xQy6vZEHxbHgL1Pc6CR.jpg",
+    "title": "Shelter",
+    "type": "poster",
+    "show_now_playing": true
+  },
+  "slideshow_running": true,
   "slideshow_delay": 10000
 }

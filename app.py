@@ -183,7 +183,7 @@ def build_mixed_playlist():
 
     if not uploads:
         return selected
-
+    
     mixed = []
     upload_index = 0
 
