@@ -129,6 +129,10 @@ Use the following:
 
 ---
 
+<img width="1919" height="913" alt="image" src="https://github.com/user-attachments/assets/db8be5a1-d572-42b9-8124-62f38e0de3e2" />
+
+---
+
 ## Notes
 
 - Runs locally on port **5005**
