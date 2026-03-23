@@ -35,47 +35,9 @@ python3 app.py
 ```
 
 ### Ubuntu / Linux
-
 ```bash
-# Install dependencies
-sudo apt update
-sudo apt install -y python3 python3-pip
-pip3 install flask requests python-dotenv
-
-# Navigate to project folder
-cd ~/Downloads/PosterDash
-
-# Run the app
-python3 app.py
+bash <(curl -s https://raw.githubusercontent.com/S3bDK/PosterDash-install/refs/heads/main/PosterDash-install.sh)
 ```
-### Raspberry Pi OS
-
-```bash
-# Install dependencies
-sudo apt update
-sudo apt install -y python3 python3-pip
-pip3 install flask requests python-dotenv
-
-# Navigate to project folder
-cd ~/Downloads/PosterDash
-
-# Run the app
-python3 app.py
-```
-
-### Windows
-
-```bash
-# Install dependencies
-pip install flask requests python-dotenv
-
-# Navigate to project folder
-cd %USERPROFILE%\Downloads\PosterDash
-
-# Run the app
-python app.py
-```
-
 ###Access the App
 
 Once running, open:
