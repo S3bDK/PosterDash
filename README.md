@@ -34,7 +34,7 @@ cd ~/Downloads/PosterDash
 python3 app.py
 ```
 
-### Ubuntu / Linux
+### Ubuntu and Raspberry Pi OS / Linux
 ```bash
 bash <(curl -s https://raw.githubusercontent.com/S3bDK/PosterDash-install/refs/heads/main/PosterDash-install.sh)
 ```
