@@ -38,7 +38,7 @@ python3 app.py
 ```bash
 bash <(curl -s https://raw.githubusercontent.com/S3bDK/PosterDash-install/refs/heads/main/PosterDash-install.sh)
 ```
-###Access the App
+### Access the App
 
 Once running, open:
 
